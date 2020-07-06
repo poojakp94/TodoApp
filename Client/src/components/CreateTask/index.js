@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+
+import { addTask } from "../../api";
 
 const CreateTaskContainer = styled.div`
   padding: 10px 80px;
@@ -23,12 +25,49 @@ const CreateButton = styled.button`
     color: #fff;
   }
 `;
-function CreateTask() {
+function CreateTask({getTaskList}) {
+  const [formData, setFormData] = useState({});
+  const [isLoading, setLoading] = useState(false);
+
+  function handleOnChange(event) {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function saveTask() {
+    setLoading(true);
+    addTask(formData)
+      .then(() => {
+        getTaskList();
+      })
+      .catch(() => {})
+      .finally(() => {
+        setLoading(false);
+      });
+  }
   return (
     <CreateTaskContainer>
       <CreateQues>What You are Upto?</CreateQues>
-      <textarea col="10" row="55"></textarea>
-      <CreateButton>Create to-do</CreateButton>
+      <div>
+        <input
+          onChange={handleOnChange}
+          value={formData.title}
+          name="title"
+          type="text"
+          style={{ height: "30px", width: "min(400px, 100%)", padding: "10px" }}
+          placeholder="title...."
+        ></input>
+        <textarea
+          onChange={handleOnChange}
+          value={formData.description}
+          name="description"
+          style={{ height: "120px", width: "min(400px, 100%)", padding: "10px" }}
+          placeholder="content..."
+        ></textarea>
+        <CreateButton disabled={isLoading} onClick={saveTask}>
+          {isLoading ? "Saving Task" : "Create to-do"}
+        </CreateButton>
+      </div>
     </CreateTaskContainer>
   );
 }
