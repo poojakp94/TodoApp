@@ -1,16 +1,20 @@
 import React, { useState } from "react";
+import ReactDOM from "react-dom";
 import styled from "styled-components";
 
-import { addTask } from "../../api";
+import { addTask, updateTask } from "../../api";
 
 const CreateTaskContainer = styled.div`
-  padding: 10px 80px;
+  padding: 20px 80px;
   display: flex;
   flex-direction: column;
+  background: #fff;
+  border-radius: 15px;
 `;
 const CreateQues = styled.p`
   font-size: 20px;
   font-weight: 600;
+  color: #333;
 `;
 const CreateButton = styled.button`
   margin-top: 20px;
@@ -18,15 +22,16 @@ const CreateButton = styled.button`
   font-size: 20px;
   border: none;
   border-radius: 5px;
-  background-color: #fff;
+  background-color: aquamarine;
   &:hover {
     cursor: pointer;
     background-color: #1245;
     color: #fff;
   }
 `;
-function CreateTask({getTaskList}) {
-  const [formData, setFormData] = useState({});
+
+function CreateTask({ getTaskList, toggleModal, initialValues, setEditTask }) {
+  const [formData, setFormData] = useState(initialValues || {});
   const [isLoading, setLoading] = useState(false);
 
   function handleOnChange(event) {
@@ -39,6 +44,21 @@ function CreateTask({getTaskList}) {
     addTask(formData)
       .then(() => {
         getTaskList();
+        toggleModal();
+      })
+      .catch(() => {})
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+
+  function editTask() {
+    setLoading(true);
+    updateTask(formData)
+      .then(() => {
+        getTaskList();
+        setEditTask(null);
+        toggleModal();
       })
       .catch(() => {})
       .finally(() => {
@@ -61,12 +81,26 @@ function CreateTask({getTaskList}) {
           onChange={handleOnChange}
           value={formData.description}
           name="description"
-          style={{ height: "120px", width: "min(400px, 100%)", padding: "10px" }}
+          style={{
+            height: "120px",
+            width: "min(400px, 100%)",
+            padding: "10px",
+          }}
           placeholder="content..."
         ></textarea>
-        <CreateButton disabled={isLoading} onClick={saveTask}>
-          {isLoading ? "Saving Task" : "Create to-do"}
-        </CreateButton>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <CreateButton
+            disabled={isLoading}
+            onClick={initialValues ? editTask : saveTask}
+          >
+            {isLoading
+              ? "Saving Task"
+              : initialValues
+              ? "Edit to-do"
+              : "Create to-do"}
+          </CreateButton>
+          <CreateButton onClick={toggleModal}>Cancel</CreateButton>
+        </div>
       </div>
     </CreateTaskContainer>
   );

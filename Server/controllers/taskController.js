@@ -54,7 +54,7 @@ const task_delete = (req, res) => {
 };
 
 //update is_completed field/ property
-const task_update = async (req, res) => {
+const toggleTask_iscomplete = async (req, res) => {
   const id = req.params.id;
   if (!id) {
     res.status(400).send("id not found");
@@ -66,12 +66,36 @@ const task_update = async (req, res) => {
     res.send(result);
   } catch (error) {
     console.log(error);
-    res.status(500).send('err')
+    res.status(500).send("err");
   }
 };
+
+//update is_completed field/ property
+const task_update = async (req, res) => {
+  const id = req.params.id;
+  if(!id){
+    res.status(400).send('id not found');
+  }
+  try {
+    const task = await Task.findOne({_id: id});
+    const { title, description } = req.body;
+    if (!title || !description) {
+      res.status(400).send("Title or description missing");
+    }
+    task.title = title || task.title;
+    task.description = description;
+    const result = await task.save();
+    res.send(result);
+  }
+  catch (error){
+    console.log(error)
+    res.status(500).send(error)
+  }
+}
 module.exports = {
   task_create_post,
   task_index,
   task_delete,
-  task_update,
+  toggleTask_iscomplete,
+  task_update
 };

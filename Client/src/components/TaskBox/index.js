@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import IconButton from "../IconButton";
-import { deleteTask, updateTask } from "../../api";
+import { deleteTask, toggleComplete } from "../../api";
 
 const TaskBoxContainer = styled.div`
   background-color: #fff;
@@ -28,9 +28,18 @@ const IconContainer = styled.div`
   justify-content: flex-end;
   padding: 20px;
 `;
-function TaskBox({ title, description, id, isCompleted, getTaskList }) {
+
+function TaskBox({
+  title,
+  description,
+  id,
+  isCompleted,
+  getTaskList,
+  toggleModal,
+  setEditTask
+}) {
   const toggleTask = () => {
-    updateTask(id).then((response) => {
+    toggleComplete(id).then((response) => {
       if (response.ok) {
         getTaskList();
       }
@@ -42,7 +51,10 @@ function TaskBox({ title, description, id, isCompleted, getTaskList }) {
       <TaskContent>{description}</TaskContent>
 
       <IconContainer>
-        <IconButton type="edit" onClick={() => {}} />
+        <IconButton type="edit" onClick={()=>{
+          setEditTask({id, title, description})
+          toggleModal()
+        }} />
         <IconButton
           type="trash"
           onClick={() => {
