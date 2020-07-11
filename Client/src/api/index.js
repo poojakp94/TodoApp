@@ -4,8 +4,19 @@ export const addTask = ({ title, description }) => {
   return request("/add-task", { title, description }, "POST");
 };
 
-export const getTasks = () => {
-  return request("/tasks");
+export const getTasks = ({page, perPage} = {}) => {
+  let url = '/tasks';
+  const query = []
+  if(page !== undefined){
+    query.push(`page=${page}`)
+  }
+  if (perPage !== undefined){
+    query.push(`perPage=${perPage}`)
+  }
+  if(query.length > 0){
+    url = `${url}?${query.join('&')}`
+  }
+  return request(url);
 };
 
 export const deleteTask = (id) => {

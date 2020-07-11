@@ -5,14 +5,16 @@ import { deleteTask, toggleComplete } from "../../api";
 
 const TaskBoxContainer = styled.div`
   background-color: #fff;
-  margin: 20px;
+  margin: 20px 0;
+  padding:10px;
   border: 2px solid #fff;
   border-radius: 12px;
 `;
 
 const Task = styled.p`
   text-align: left;
-  padding: 10px 0 10px 10px;
+  padding: 10px;
+  border-left: 5px solid  #709FB0;
   text-decoration: ${({ shouldStrike }) =>
     shouldStrike ? "line-through" : "none"};
 `;
@@ -20,6 +22,7 @@ const Task = styled.p`
 const TaskContent = styled.div`
   text-align: left;
   padding: 10px;
+  border-top: 1px solid  #709FB0;
 `;
 const IconContainer = styled.div`
   display: grid;

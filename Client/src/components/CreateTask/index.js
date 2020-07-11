@@ -33,7 +33,7 @@ const CreateButton = styled.button`
 function CreateTask({ getTaskList, toggleModal, initialValues, setEditTask }) {
   const [formData, setFormData] = useState(initialValues || {});
   const [isLoading, setLoading] = useState(false);
-
+  // const [disableBtn, setDisableBtn] = useState(true);
   function handleOnChange(event) {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -53,7 +53,7 @@ function CreateTask({ getTaskList, toggleModal, initialValues, setEditTask }) {
   }
 
   function editTask() {
-    setLoading(true);
+    setLoading(false);
     updateTask(formData)
       .then(() => {
         getTaskList();
@@ -62,8 +62,13 @@ function CreateTask({ getTaskList, toggleModal, initialValues, setEditTask }) {
       })
       .catch(() => {})
       .finally(() => {
-        setLoading(false);
+        setLoading(true);
       });
+  }
+
+  function cancleTask(){
+    setEditTask(null);
+    toggleModal();
   }
   return (
     <CreateTaskContainer>
@@ -99,7 +104,7 @@ function CreateTask({ getTaskList, toggleModal, initialValues, setEditTask }) {
               ? "Edit to-do"
               : "Create to-do"}
           </CreateButton>
-          <CreateButton onClick={toggleModal}>Cancel</CreateButton>
+          <CreateButton onClick={cancleTask}>Cancel</CreateButton>
         </div>
       </div>
     </CreateTaskContainer>

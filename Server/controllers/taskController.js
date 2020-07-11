@@ -24,8 +24,41 @@ const task_create_post = (req, res) => {
 
 // get tasks from db
 const task_index = (req, res) => {
-  Task.aggregate([
+  const { page, perPage } = req.query;
+  const pageNum = Number(page);
+  const perPageNum = Number(perPage);
+
+  if (page !== undefined) {
+    if (
+      !Number.isInteger(pageNum) ||
+      (Number.isInteger(pageNum) && pageNum < 1)
+    ) {
+      res.status(400).send("page should be greater than 1");
+    }
+  }
+  if (perPage !== undefined) {
+    if (
+      !Number.isInteger(perPageNum) ||
+      (Number.isInteger(perPageNum) && perPageNum < 1)
+    ) {
+      res.status(400).send("perPage should be grater than 1");
+    }
+  }
+  if (
+    (page !== undefined && perPage === undefined) ||
+    (page === undefined && perPage !== undefined)
+  ) {
+    res.status(400).send("page or perPage is missing");
+  }
+
+  let aggregationPipeline = [
     { $sort: { createdAt: -1 } },
+    {
+      $skip: perPageNum * (pageNum - 1),
+    },
+    {
+      $limit: perPageNum,
+    },
     {
       $group: {
         _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
@@ -33,7 +66,15 @@ const task_index = (req, res) => {
         count: { $sum: 1 },
       },
     },
-  ])
+  ];
+
+  if (!page && !perPage) {
+    aggregationPipeline = [
+      ...aggregationPipeline.slice(0, 1),
+      ...aggregationPipeline.slice(3),
+    ];
+  }
+  Task.aggregate(aggregationPipeline)
     .sort({ _id: -1 })
     .then((result) => res.send(result))
     .catch((err) => console.log(err));
@@ -73,11 +114,11 @@ const toggleTask_iscomplete = async (req, res) => {
 //update is_completed field/ property
 const task_update = async (req, res) => {
   const id = req.params.id;
-  if(!id){
-    res.status(400).send('id not found');
+  if (!id) {
+    res.status(400).send("id not found");
   }
   try {
-    const task = await Task.findOne({_id: id});
+    const task = await Task.findOne({ _id: id });
     const { title, description } = req.body;
     if (!title || !description) {
       res.status(400).send("Title or description missing");
@@ -86,16 +127,21 @@ const task_update = async (req, res) => {
     task.description = description;
     const result = await task.save();
     res.send(result);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
   }
-  catch (error){
-    console.log(error)
-    res.status(500).send(error)
-  }
-}
+};
+
+const task_per_page = (req, res) => {
+  let page = req.query.page;
+  let limit = req.query.limit;
+};
 module.exports = {
   task_create_post,
   task_index,
   task_delete,
   toggleTask_iscomplete,
-  task_update
+  task_update,
+  task_per_page,
 };
