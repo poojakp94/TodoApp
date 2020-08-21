@@ -74,10 +74,16 @@ const task_index = (req, res) => {
       ...aggregationPipeline.slice(3),
     ];
   }
-  Task.aggregate(aggregationPipeline)
-    .sort({ _id: -1 })
-    .then((result) => res.send(result))
-    .catch((err) => console.log(err));
+
+  const promise1 = Task.aggregate(aggregationPipeline).sort({ _id: -1 });
+  const promise2 = Task.countDocuments()
+  Promise.all([promise1, promise2])
+  .then(([res1, res2]) => {
+    res.send({
+      data: res1,
+      totalCount: res2
+
+  })}).catch(err => console.log(err))  
 };
 
 // delete tasks from db

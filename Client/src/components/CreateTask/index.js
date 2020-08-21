@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ReactDOM from "react-dom";
+import Overlay from "../Overlay";
 import styled from "styled-components";
 
 import { addTask, updateTask } from "../../api";
@@ -30,21 +30,28 @@ const CreateButton = styled.button`
   }
 `;
 
-function CreateTask({ getTaskList, toggleModal, initialValues, setEditTask }) {
+function CreateTask({
+  getTaskList,
+  toggleOverlay,
+  initialValues,
+  setEditTask,
+}) {
   const [formData, setFormData] = useState(initialValues || {});
   const [isLoading, setLoading] = useState(false);
-  // const [disableBtn, setDisableBtn] = useState(true);
+
   function handleOnChange(event) {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    
   }
-
+  
+ 
   function saveTask() {
     setLoading(true);
     addTask(formData)
       .then(() => {
         getTaskList();
-        toggleModal();
+        toggleOverlay();
       })
       .catch(() => {})
       .finally(() => {
@@ -58,7 +65,7 @@ function CreateTask({ getTaskList, toggleModal, initialValues, setEditTask }) {
       .then(() => {
         getTaskList();
         setEditTask(null);
-        toggleModal();
+        toggleOverlay();
       })
       .catch(() => {})
       .finally(() => {
@@ -66,48 +73,56 @@ function CreateTask({ getTaskList, toggleModal, initialValues, setEditTask }) {
       });
   }
 
-  function cancleTask(){
+  function cancleTask() {
     setEditTask(null);
-    toggleModal();
+    toggleOverlay();
   }
+
   return (
-    <CreateTaskContainer>
-      <CreateQues>What You are Upto?</CreateQues>
-      <div>
-        <input
-          onChange={handleOnChange}
-          value={formData.title}
-          name="title"
-          type="text"
-          style={{ height: "30px", width: "min(400px, 100%)", padding: "10px" }}
-          placeholder="title...."
-        ></input>
-        <textarea
-          onChange={handleOnChange}
-          value={formData.description}
-          name="description"
-          style={{
-            height: "120px",
-            width: "min(400px, 100%)",
-            padding: "10px",
-          }}
-          placeholder="content..."
-        ></textarea>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <CreateButton
-            disabled={isLoading}
-            onClick={initialValues ? editTask : saveTask}
-          >
-            {isLoading
-              ? "Saving Task"
-              : initialValues
-              ? "Edit to-do"
-              : "Create to-do"}
-          </CreateButton>
-          <CreateButton onClick={cancleTask}>Cancel</CreateButton>
+    <Overlay>
+      <CreateTaskContainer>
+        <CreateQues>What You are Upto?</CreateQues>
+        <div>
+          <input
+            onChange={handleOnChange}
+            value={formData.title}
+            name="title"
+            type="text"
+            style={{
+              height: "40px",
+              width: "min(400px, 100%)",
+              padding: "10px",
+              marginBottom: '10px'
+            }}
+            placeholder="Title...."
+          ></input>
+          <textarea
+            onChange={handleOnChange}
+            value={formData.description}
+            name="description"
+            style={{
+              height: "120px",
+              width: "min(400px, 100%)",
+              padding: "10px",
+            }}
+            placeholder="Content..."
+          ></textarea>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <CreateButton
+              disabled={isLoading}
+              onClick={initialValues ? editTask : saveTask}
+            >
+              {isLoading
+                ? "Saving Task"
+                : initialValues
+                ? "Edit to-do"
+                : "Create to-do"}
+            </CreateButton>
+            <CreateButton onClick={cancleTask}>Cancel</CreateButton>
+          </div>
         </div>
-      </div>
-    </CreateTaskContainer>
+      </CreateTaskContainer>
+    </Overlay>
   );
 }
 

@@ -4,61 +4,22 @@ import CreateTask from "./components/CreateTask";
 import IconButton from "./components/IconButton";
 import { getTasks } from "./api";
 import "./App.css";
-import { createPortal } from "react-dom";
 import moment from "moment";
 import Button from "./components/Button";
+import Loader from "./components/Loader";
 
-// 'modal-root' is a sibling to 'root'
-const modalRoot = document.getElementById("modal-root");
-
-function Modal({ isOpen, children }) {
-  //element to which the modal will be rendered
-  const el = document.createElement("div", { height: "100%", width: "100%" });
-
-  useEffect(() => {
-    // append to root when the children of Modal are mounted
-    modalRoot.appendChild(el);
-
-    // do a cleanup
-    return () => {
-      modalRoot.removeChild(el);
-    };
-  }, [el]);
-
-  return (
-    isOpen &&
-    createPortal(
-      // child elemenet
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          height: "100vh",
-          width: "100vw",
-          display: "flex",
-          justifyContent: "center",
-          padding: "100px",
-          background: "rgb(0,0,0,0.5)",
-        }}
-      >
-        <div>{children}</div>
-      </div>,
-      // target container
-      el
-    )
-  );
-}
 function App() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState({data: [], totalCount: 0});
   const [isLoading, setLoading] = useState(false);
-  const perPage = 3;
+  const perPage = 5;
+  let totalCount = data.totalCount;
+  let totalPages = Math.ceil(totalCount / perPage)
   const [page, setPage] = useState(1);
 
-  // modal
-  const [isModalOpen, setModalOpen] = useState(false);
-  // const [disableBtn, setDisableBtn] = useState(false);
+  // Overlay
+  const [isOverlayOpen, setOverlayOpen] = useState(false);
   const [editTask, setEditTask] = useState(null);
-  const toggleModal = () => setModalOpen(!isModalOpen);
+  const toggleOverlay = () => setOverlayOpen(!isOverlayOpen);
 
   const getTaskList = () => {
     setLoading(true);
@@ -78,41 +39,42 @@ function App() {
     <div className="App">
       <header className="App-header">TO DO LIST</header>
       <div className="insert-icon">
-        <IconButton type="add" onClick={toggleModal} ></IconButton>
+        <IconButton type="add" onClick={toggleOverlay}></IconButton>
       </div>
-      {/* diplay tasks list */}
-      {isLoading
-        ? "loading Data..."
-        : data.map((tasksGroup) => {
-            return (
-              <Fragment key={tasksGroup._id}>
-                <div className="date">
-                  Date: {moment(tasksGroup._id).format("DD MMMM YYYY")}{" "}
-                </div>
-                {tasksGroup.list.map((task) => (
-                  <TaskBox
-                    key={task._id}
-                    title={task.title}
-                    description={task.description}
-                    id={task._id}
-                    getTaskList={getTaskList}
-                    isCompleted={task.is_completed}
-                    toggleModal={toggleModal}
-                    setEditTask={setEditTask}
-                  />
-                ))}
-              </Fragment>
-            );
-          })}
+      <Loader isOpen={isLoading} />
+      <div style={{minHeight: '55vh'}}>
+        {data.data.map((tasksGroup) => {
+          return (
+            <Fragment key={tasksGroup._id}>
+              <div className="date">
+                Date: {moment(tasksGroup._id).format("DD MMMM YYYY")}{" "}
+              </div>
+              {tasksGroup.list.map((task) => (
+                
+                <TaskBox
+                  key={task._id}
+                  title={task.title}
+                  description={task.description}
+                  id={task._id}
+                  getTaskList={getTaskList}
+                  isCompleted={task.is_completed}
+                  toggleOverlay={toggleOverlay}
+                  setEditTask={setEditTask}
+                  editTask={editTask}
+                />
+              ))}
+            </Fragment>
+          );
+        })}
+      </div>
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between",
-          width: "30%",
-          margin: "0 auto",
+          justifyContent: "center",
         }}
       >
         <Button
+          style={{ marginRight: "30px" }}
           text="Back"
           disabled={page === 1}
           onClick={() => {
@@ -120,21 +82,20 @@ function App() {
           }}
         ></Button>
         <Button
+          disabled={page === totalPages}
           text="Next"
           onClick={() => {
             setPage((prevPage) => prevPage + 1);
           }}
         ></Button>
       </div>
-
-      <Modal isOpen={isModalOpen}>
-        <CreateTask
-          getTaskList={getTaskList}
-          toggleModal={toggleModal}
-          initialValues={editTask}
-          setEditTask={setEditTask}
-        />
-      </Modal>
+      
+      {isOverlayOpen && <CreateTask
+        getTaskList={getTaskList}
+        toggleOverlay={toggleOverlay}
+        initialValues={editTask}
+        setEditTask={setEditTask}
+      />}
     </div>
   );
 }

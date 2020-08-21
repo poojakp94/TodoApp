@@ -13,7 +13,7 @@ const Button = styled.button`
   font-size: 20px;
   border: none;
   border-radius: 5px;
-  background-color: #f4ebc1;
+  background: #fff;
   &:hover {
     cursor: pointer;
   }
@@ -76,7 +76,7 @@ function IconButton({ type, onClick }) {
       case "trash":
         return "trash";
       case "checkmark":
-        return "checkmark";
+        return "completed";
       case "refresh":
         return "refresh";
       case "add":
