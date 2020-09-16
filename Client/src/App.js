@@ -7,6 +7,7 @@ import "./App.css";
 import moment from "moment";
 import Button from "./components/Button";
 import Loader from "./components/Loader";
+import Overlay from "./components/Overlay";
 
 function App() {
   const [data, setData] = useState({data: [], totalCount: 0});
@@ -32,9 +33,11 @@ function App() {
         setLoading(false);
       });
   };
+
   useEffect(() => {
     getTaskList();
   }, [page]);
+
   return (
     <div className="App">
       <header className="App-header">TO DO LIST</header>
@@ -90,12 +93,12 @@ function App() {
         ></Button>
       </div>
       
-      {isOverlayOpen && <CreateTask
+      {isOverlayOpen && <Overlay isLoading={isLoading}><CreateTask
         getTaskList={getTaskList}
         toggleOverlay={toggleOverlay}
         initialValues={editTask}
         setEditTask={setEditTask}
-      />}
+      /></Overlay>}
     </div>
   );
 }

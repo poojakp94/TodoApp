@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, {useEffect } from "react";
 import { createPortal } from "react-dom";
 
 // 'Overlay-root' is a sibling to 'root'
 const OverlayRoot = document.getElementById("Overlay-root");
 
-function Overlay({ children }) {
+function Overlay({ children, isLoading }) {
   //element to which the Overlay will be rendered
   const el = document.createElement("div", { height: "100%", width: "100%" });
 
@@ -26,7 +26,7 @@ function Overlay({ children }) {
       style={{
         position: "absolute",
         top: 0,
-        height: "100vh",
+        height: isLoading ? "100%" : "100vh",
         width: "100vw",
         display: "flex",
         justifyContent: "center",

@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import Overlay from "../Overlay";
 import styled from "styled-components";
-
 import { addTask, updateTask } from "../../api";
 
 const CreateTaskContainer = styled.div`
@@ -79,7 +77,7 @@ function CreateTask({
   }
 
   return (
-    <Overlay>
+    // <Overlay>
       <CreateTaskContainer>
         <CreateQues>What You are Upto?</CreateQues>
         <div>
@@ -122,7 +120,7 @@ function CreateTask({
           </div>
         </div>
       </CreateTaskContainer>
-    </Overlay>
+    // </Overlay>
   );
 }
 
