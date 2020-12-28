@@ -12,7 +12,7 @@ import Overlay from "./components/Overlay";
 function App() {
   const [data, setData] = useState({data: [], totalCount: 0});
   const [isLoading, setLoading] = useState(false);
-  const perPage = 5;
+  const perPage = 4;
   let totalCount = data.totalCount;
   let totalPages = Math.ceil(totalCount / perPage)
   const [page, setPage] = useState(1);
@@ -45,7 +45,7 @@ function App() {
         <IconButton type="add" onClick={toggleOverlay}></IconButton>
       </div>
       <Loader isOpen={isLoading} />
-      <div style={{minHeight: '55vh'}}>
+      <div style={{ minHeight: "60vh" }}>
         {data.data.map((tasksGroup) => {
           return (
             <Fragment key={tasksGroup._id}>
@@ -53,7 +53,6 @@ function App() {
                 Date: {moment(tasksGroup._id).format("DD MMMM YYYY")}{" "}
               </div>
               {tasksGroup.list.map((task) => (
-                
                 <TaskBox
                   key={task._id}
                   title={task.title}
@@ -73,12 +72,12 @@ function App() {
       <div
         style={{
           display: "flex",
-          justifyContent: "center",
+          justifyContent: "space-between",
         }}
       >
         <Button
           style={{ marginRight: "30px" }}
-          text="Back"
+          text="←"
           disabled={page === 1}
           onClick={() => {
             setPage((prevPage) => prevPage - 1);
@@ -86,19 +85,23 @@ function App() {
         ></Button>
         <Button
           disabled={page === totalPages}
-          text="Next"
+          text="→"
           onClick={() => {
             setPage((prevPage) => prevPage + 1);
           }}
         ></Button>
       </div>
-      
-      {isOverlayOpen && <Overlay isLoading={isLoading}><CreateTask
-        getTaskList={getTaskList}
-        toggleOverlay={toggleOverlay}
-        initialValues={editTask}
-        setEditTask={setEditTask}
-      /></Overlay>}
+
+      {isOverlayOpen && (
+        <Overlay>
+          <CreateTask
+            getTaskList={getTaskList}
+            toggleOverlay={toggleOverlay}
+            initialValues={editTask}
+            setEditTask={setEditTask}
+          />
+        </Overlay>
+      )}
     </div>
   );
 }

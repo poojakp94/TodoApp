@@ -20,7 +20,7 @@ const CreateButton = styled.button`
   font-size: 20px;
   border: none;
   border-radius: 5px;
-  background-color: aquamarine;
+  background-color: #ddd;
   &:hover {
     cursor: pointer;
     background-color: #1245;

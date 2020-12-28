@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 // 'Overlay-root' is a sibling to 'root'
 const OverlayRoot = document.getElementById("Overlay-root");
 
-function Overlay({ children, isLoading }) {
+function Overlay({ children }) {
   //element to which the Overlay will be rendered
   const el = document.createElement("div", { height: "100%", width: "100%" });
 
@@ -26,7 +26,7 @@ function Overlay({ children, isLoading }) {
       style={{
         position: "absolute",
         top: 0,
-        height: isLoading ? "100%" : "100vh",
+        height: "100%",
         width: "100vw",
         display: "flex",
         justifyContent: "center",

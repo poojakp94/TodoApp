@@ -8,20 +8,19 @@ body {
 
 .App {
   background-color: #726A95;
-  padding: 40px;
-  text-align: center;
+  padding: 40px ;
   width: 50%;
   min-height: 100vh;
   margin: 0 auto;
 }
 
 .App-header {
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  text-align: center;
+  font-size: 25px;
   font-weight: 600;
   color: white;
 }
+
 
 .insert-icon {
   display: flex;

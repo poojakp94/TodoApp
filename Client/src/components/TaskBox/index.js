@@ -8,7 +8,7 @@ const TaskBoxContainer = styled.div`
   margin: 20px 0;
   padding: 10px;
   border: 2px solid #fff;
-  border-radius: 12px;
+  border-radius: 8px;
 `;
 
 const Task = styled.p`
@@ -17,12 +17,14 @@ const Task = styled.p`
   border-left: 5px solid #709fb0;
   text-decoration: ${({ shouldStrike }) =>
     shouldStrike ? "line-through" : "none"};
+    overflow-wrap: break-word;
 `;
 
 const TaskContent = styled.div`
   text-align: left;
   padding: 10px;
   border-top: 1px solid #709fb0;
+  overflow-wrap: break-word;
 `;
 const IconContainer = styled.div`
   display: grid;
@@ -30,6 +32,7 @@ const IconContainer = styled.div`
   justify-content: flex-end;
   align-items: center;
 `;
+
 
 function TaskBox({
   title,
@@ -52,10 +55,10 @@ function TaskBox({
   return (
     
     <TaskBoxContainer>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <Task shouldStrike={isCompleted}>{title}</Task>
-        <IconContainer>
-          <IconButton
+      <Task shouldStrike={isCompleted}>{title}</Task>
+      <TaskContent>{description}</TaskContent>
+      <IconContainer>
+        <IconButton
             type="edit"
             onClick={() => {
               setEditTask({ id, title, description });
@@ -77,9 +80,7 @@ function TaskBox({
           ) : (
             <IconButton type="checkmark" onClick={toggleTask} />
           )}
-        </IconContainer>
-      </div>
-      <TaskContent>{description}</TaskContent>
+      </IconContainer>
     </TaskBoxContainer>
   );
 }
